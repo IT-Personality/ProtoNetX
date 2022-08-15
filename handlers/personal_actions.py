@@ -1,4 +1,6 @@
+from http import client
 import string
+from urllib import response
 from dispatcher import dp
 import config
 from aiogram import Bot,types,executor,Dispatcher
@@ -47,6 +49,7 @@ async def start(message: types.Message):
 async def chat(message: types.Message):
     await message.reply(f"ID чата: {message.chat.id}")
 
+
 @dp.message_handler(commands=["ban"], commands_prefix="/")
 async def stabs(message: types.Message):
     if str(message.from_user.id) == config.ADMIN_ID:
@@ -69,10 +72,11 @@ async def get_all_news(message: types.Message):
             news = f"{hbold(datetime.datetime.fromtimestamp(v['article_date_timestamp']))}\n" \
                 f"{hlink(v['article_title'], v['article_url'])}"
             await message.answer(news)
+    else:
+        await message.reply("Увы, эту команду может отправлять только админ")
 
 @dp.message_handler(commands="last_fave_news")
 async def get_last_five_news(message: types.Message):
-    if str(message.from_user.id) == config.ADMIN_ID:
         with open("news.json") as file:
             news_dict = json.load(file)
 
@@ -84,7 +88,6 @@ async def get_last_five_news(message: types.Message):
 
 @dp.message_handler(commands="fresh_news")
 async def get_fresh_news(message: types.Message):
-    if str(message.from_user.id) == config.ADMIN_ID:
         fresh_news = check_news_update()
 
         if len(fresh_news) >= 1:
